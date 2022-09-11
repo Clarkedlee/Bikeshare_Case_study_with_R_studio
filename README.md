@@ -9,4 +9,6 @@ The marketing director believes the company’s future success depends on conver
 Annual subscribed users.
 As the data analyst of the company, the tasks in the project include discovering the different usage between
 casual users and the subscribed user; Basic on the insight from the analysis, provide a recommendation on
-Marketing strategy to turn the casual users into subscribed users.
+Marketing strategy to turn everyday users into subscribed users.
+
+All the analysis was work on the R studios. I have shown all the R code for this project in the repository, so anyone who would like to perform a similar valuation in their project could have a reference on this resource.
