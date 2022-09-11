@@ -1,6 +1,6 @@
 # Case Study:How Does a Bike-Share Navigate Speedy Success?
 
-##Introduction
+## Introduction
 This project is a data analysis project for a fictional company, Cyclists, A bike-share company in Chicago.
 The marketing director believes the company’s future success depends on converting the casual customer to
 Annual subscribed users.
