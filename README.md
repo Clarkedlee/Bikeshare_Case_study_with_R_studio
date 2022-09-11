@@ -2,4 +2,4 @@
 # Bikeshare_Case_study_with_R_studio
 # Bikeshare_Case_study_with_R_studio
 
-![Open a new Restaurant]()
+![Open a new Restaurant](https://github.com/Clarkedlee/Bikeshare_Case_study_with_R_studio/blob/main/FRBCP.jpeg)
