@@ -1,6 +1,6 @@
 # Case Study:How Does a Bike-Share Navigate Speedy Success?
 
-![share_bike](https://github.com/Clarkedlee/Opening-Restaurant-in-Auckland/blob/2e8771c2ed376419977f87bc890ca812a997fe9e/Screen%20Shot%202021-11-15%20at%204.47.10%20PM.jpg)
+![share_bike](https://github.com/Clarkedlee/Bikeshare_Case_study_with_R_studio/blob/main/FRBCP.jpeg)
 
 
 ## Introduction
