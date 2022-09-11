@@ -1,0 +1,390 @@
+---
+title: "Case Study:How Does a Bike-Share Navigate Speedy Success?"
+author: "Clarke Li"
+date: "2022-08-18"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Case Study: How Does a Bike-Share Navigate Speedy Sucess?
+
+![](FRBCP.jpeg)
+<a href="https://www.freepik.com/vectors/outdoor-activities">Outdoor activities vector created by pch.vector - www.freepik.com</a>
+___
+## Introduction:
+
+This project is a data analysis project for a fictional company, Cyclists, A bike-share company in Chicago. The marketing director believes the company's future success depends on converting the casual customer to Annual subscribed users.  
+
+As the data analyst of the company, the tasks in the project include discovering the different usage between casual users and the subscribed user; Basic on the insight from the analysis, provide a recommendation on Marketing strategy to turn the casual users into subscribed users.
+
+## Background of the fiction company
+
+Cyclistic started its bike-share offering in 2016. They have grown to own a fleet of 5,284 bikes that are tracked by GPS and located in 692 stations in Chicago.
+
+The company's CEO has set a clear goal to boost the business's profits: "Design marketing strategies aimed at converting casual riders into annual members. The business task of designing market strategies has been handed down to the Cyclistic marketing analytics team. The team will make a recommendation on the marketing program. And the program will be approved by the executive team in Cyclistic before rollout
+
+## The Bussiness Case Study
+
+As the goal of the project is to develop effective marketing strategies for the business, there will be an in-depth data analysis on the historical trip data in previous 12 month, which is collected from the customer by the Cyclistic over years of operation(in the fiction company time line). The analytic team should answer three questions that will guide the future marketing program:
+
+- 1. How do annual members and casual riders use Cyclistic bikes differently?
+
+- 2. Why would casual riders buy Cyclistic annual memberships?
+
+- 3. How can Cyclistic use digital media to influence casual riders to become members?
+
+___
+## Task One: Preparation
+
+This session is the beginning of the whole project. The main tasks include collecting and related information, checking the bias and credibility of the data collected, and preparing the data by reviewing and further processing data.
+
+### Organise the data directary
+
+The data set is download from following [LINK](https://divvy-tripdata.s3.amazonaws.com/index.html).
+
+The datasets are downloaded in Zip format. There are two types of data in the unzipped dataset folder, the Divvy Trips data and the Divvy stations data. The Divvy Trips data has all the user and trip information and is saved in the CSV format. The Divvy Stations data, on the other hand, contains all the existing bicycle stations' geo-location information and is saved as the ".xsl". 
+
+For the analytic need, only Divvy_Trips data from previous years are needed. Therefore, all the Divvy Trips will be copied and transferred to a separate folder in the repository. A new folder is created in the root directory, and the folder is renamed to **Cyclistic_trip_data**. Then, Trips data files were moved to this folder.
+
+### Data credibility, Integrity and its issues 
+Because this is the friction company, the actual data is made available by Motivate International Inc. under this [license](https://ride.divvybikes.com/data-license-agreement). Moreover, the information is collected under a different entity, Lyft Bikes and Scooters, LLC("Bikeshare"). This public data allowed the user to explore the different types of customers using Cyclistic. In the notice, the license prohibits using personally identifiable information in the dataset.
+
+In the data folder, the time of data is range from 2013 to present. However, in the time line of our frinction company, it started the business in the year of 2016. Hence the data before the 2016 will be automatically inore. On the hand, there is some data format different in previous years of data collected. Therefore, as preset in the business case, only the data from past 12 months will be used in this analynadic process.  
+
+In these dataset, it has information about user type and travel time, and the travel distance. Those infomation will be used to find the patent of different account usage. 
+
+### Tools for analytic
+
+In this project, the R studio will be the primary tool working.Because The R studio is a comprehensive equipment for data analysis and data engineering. It has all the functions available in data cleaning, filtering, algebraic calculation, graphic drawing, etc. 
+
+On the other hand, Git will be used as version control. Git will help track the change and prevent unintended alternation on the work saved. That measure will provide better security for the project.
+
+
+
+Use R studio to load the relatived data into the dataframe. But right before all of this, the configuration of the working enviroment shall be setup, installed neccessary package, laod all necssary liberary.
+
+___
+
+## Task two: Data Processing
+
+### Setting R 
+
+Use R studio to load the relatived data into the dataframe. But right before all of this, the configuration of the working enviroment shall be setup, installed neccessary package, laod all necssary liberary.
+
+```{r configuration_setup}
+##*** Setup the working enviroment *****##
+## This code is for installing and loading required package for the analyltic
+
+#*** install required package
+#install.packages("tidyverse")
+#install.package("data")
+#install.packages("here") 
+#install.packages("skimr")
+#install.packages("lubridate")
+#install.packages("ggplot2")
+#** Load the database liberary
+
+library(tidyverse)
+  #coherent system of packages for data manipulation, exploration and visualization
+
+library(readr) 
+  #read csv function
+
+library(data.table)
+
+library("skimr")
+  #provide summary statistics about variables in data frames, tibbles, data tables and vectors. 
+
+library("lubridate")
+#tools to manipulate dates times to the forms easy to work with.
+
+#* Package 'here'
+#* Constructs paths to your project's files.
+#* Declare the relative path of a file within your project with 'i_am()'. Use the 'here()' function as a drop-in replacement for 'file.path()', it will always locate #*the files relative to your project root.
+
+library(here)
+
+#* Visalization **#
+library(ggplot2)
+
+```
+
+### Load dataset
+Loading all the CSV files trip data from the **Cyclistic_trip_data** folder.
+
+#### Problem in loading the CSV files
+
+At the begging of the process,  all the CSV files had been unzipped and moved into the new folder. But there was a problem spotted in their naming system. That was, all the files did not follow a unique naming convention. Most importantly, there is one more problem with the name of the files. No conventional charter has been used in the files name, which is the dash "-" had been, which should be replaced with the underscore "_". And the file name starts shall start from a letter instead of the number
+
+For example, the files name "202004-divvy-tripdata.csv" is not recommand in the naming method, it is recommanded to check to "Divvy_tripdata_202004.csv".
+
+
+```{r creating_dataset}
+#loading multiple CSV files into one dataframe
+#** list.files() functions produce a character vector of the names of files or directories in the named directory.
+#*
+
+trips_df <-
+  list.files(path="./Cyclistic_trip_data/",pattern="*.csv",full.names = TRUE)%>%
+  map_df(~fread(.))
+head(trips_df)
+#colnames(trips_df)
+
+```
+
+## Clean and review the dataframe
+
+This process include clean and inspect the data. It is preprocess before furture analysit.
+```{r review dataframe}
+number_of_colums <- length(colnames(trips_df))
+# number_of_colums # The number of columes in the dataframe
+
+#check the if there is any missing value in any of the columns
+for(y in 1:number_of_colums){
+  
+  missing_number <- sum(is.na(subset(x=trips_df,,y)))
+  #missing_number <- sum(is.null(trips_df[,x]) == TRUE)
+  cat("There are ",missing_number , "miss values in this column",colnames(trips_df)[y],"\n")
+}
+
+```
+
+The result show there are valuse in end_lat and end_lng. This might means there is no bike parking back to the station. However, this is no important for the analysis.
+
+```{r structure_of_data_frame}
+str(trips_df)
+```
+
+### Process with dataframe
+
+In this part of work, there will be further process to the raw data, extracting useful information, perfoming calculation and reorgranise the dataframe.
+
+
+#### create new columns
+
+
+Worked the duration for each ride in seconds, and store the result at the new column called ride_length.
+Use the "wday" function to workout the day of the week when people used the bike rental service, and creat a new column call "day of week". Created started_time column to record time the trip started.
+
+
+```{r create_new_column }
+#trips_df_14 <- mutate(trips_df, ride_length = ended_at - started_at)
+#work out the duration by calculate the ended time minus started time
+#creat another column record the time service started
+#wday() is function of work the day in a week from the date of the year
+trips_df_14 <- trips_df %>%
+    mutate(
+      ride_length = ended_at - started_at,
+      day_of_week = wday(trips_df$started_at),
+      time_of_day = hour(trips_df$started_at)                 
+    )
+
+```
+
+____
+
+## Task Three: Analysis
+
+### Choosing paremeter of the analysis
+In the previous task, there was preprocess on these data frames. The data frame is ready for the analysis task. There is some missing number in the columns of the end station coordination. That could be why the bike did not return to the station or illegal parking etc. However, this information is not necessarily crucial to our results. Therefore, these two columns will not store in the new data frame for the analytic progress.
+
+Moreover, the "started_at" and "ended_at" columns recorded the of travel for each single trip. The started_at column could used to find out which location of the station is busier than the other. However, the ended_at has less signication in this praticular project. For the same reason, the "start_station_id","end_station_name","end_station_id", start_lat","start_lng","end_lat","end_lng" will be drop out from the dataframe for the final analysis. There are 8 column remained in the dataframe.
+
+```{r analysis_dataframe}
+#create a new dataframe for the analysis.
+analysis_df <- subset.data.frame(trips_df_14,select = c(ride_id,rideable_type,start_station_name,end_station_name,started_at,member_casual,ride_length,day_of_week,time_of_day))
+colnames(analysis_df) 
+```
+
+
+### The duration of ride
+The duration of ride is too records the time each user used the service. However, there were some duration of trips is less than two minus(120 seconds). The user who is in these kind of ride is not on their purpose of communiting, they could just on a trial or simple change their mind after taken the service. Therefore, those samples were not the ideal sample to study the user behavior.
+
+
+```{r filter_data}
+
+# The travel duration are less than 120 seconds
+#analysis_df%>%
+#  filter(ride_length <= 120)%>%
+#  group_by(member_casual)
+  
+# work the percentage of the vast account with less 2 mins of ride
+shot_trips_count <- analysis_df%>%
+  filter(ride_length <= 120)%>%
+  group_by(member_casual) %>%
+  count()%>%
+  ungroup()%>%
+  mutate(perc = (n/sum(n)))%>%
+  arrange(perc)%>%
+  mutate(percents = scales::percent(perc))
+  
+rename(shot_trips_count, total_count = n)
+
+
+#draw pie chart
+ggplot(data = shot_trips_count, aes(x="", y=perc , fill=member_casual)) +
+  geom_bar(stat="identity", width=1) +
+  geom_label(aes(label = percents),
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE) +
+  coord_polar("y", start=0)
+
+#ggplot(data = shot_trips_count) +
+#geom_col(mapping = aes(member_casual,n,fill = member_casual ))
+
+# The durations are longer than 2 mins
+long_trips_count <- analysis_df%>%
+  filter(ride_length > 120)%>%
+  group_by(member_casual) %>%
+  count()%>%
+  ungroup()%>%
+  mutate(perc = (n/sum(n)))%>%
+  arrange(perc)%>%
+  mutate(percents = scales::percent(perc))
+rename(long_trips_count,total_count = n)
+
+ggplot(data = long_trips_count, aes(x="", y=perc , fill=member_casual)) +
+  geom_bar(stat="identity", width=1) +
+  geom_label(aes(label = percents),
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE) +
+  coord_polar("y", start=0)
+
+#gplot(data = long_trips_count) +
+#geom_col(mapping = aes(member_casual,n,fill = member_casual ))
+#ggplot(data = shot_trips_count) +
+#  geom_col(mapping = aes(x=member_casual,  fill = member_casual))
+```
+
+The result showed there are 2888564 ride have duration longer than 2 mins last 12 month for casual user, where as there are 3610688 ride for members. The percentage of causual rider who did less than 2 mins is about 34%. Meanwhile, it is about 44% for duration logner than 2 mins.
+
+
+```{r summary}
+# skim_without_charts() function provides a detailed summary of the data
+analysis_df%>%
+  group_by(member_casual)%>%
+  filter(ride_length > 120)%>%
+  select(ride_length,member_casual)%>%
+  skim_without_charts()
+
+# Work the mean of the duration for different type of users.
+mean_of_ride <- analysis_df%>%
+  group_by(member_casual)%>%
+  filter(ride_length > 120)%>%
+  select(ride_length,member_casual)%>%
+  summarize(duration_mean = mean(ride_length))
+mean_of_ride
+
+ggplot(data = mean_of_ride) +
+geom_col(mapping = aes(member_casual,duration_mean,fill = member_casual ))
+```
+In the graph of the average trip duration, the casual customer will use the service longer than the subscribe customer. 
+
+### The day of ride
+In this session, the usage statistic will be grouped by the day of the week. The total number of rides on each day of the week over 12 month period will be added. Then, it will be straightforward to see which day in the week is busier. 
+
+```{r}
+colnames(analysis_df)
+
+# To check which has the most of usage
+Ride_weekly <- analysis_df%>%
+  group_by( day_of_week)%>%
+  select(ride_id, member_casual,day_of_week)%>%
+  count()%>%
+  ungroup()%>%
+  mutate( perc = n/sum(n))%>%
+  arrange(desc(perc))%>%
+  mutate(percents = scales::percent(perc))
+rename(Ride_weekly, trips = n)
+#print(Ride_weekly)
+# Plotting the chart
+ggplot(data = Ride_weekly) +
+geom_col(mapping = aes(day_of_week,n,fill = n ))
+
+
+# To check which has the most of usage by groups
+Ride_weekly_by_group <- analysis_df%>%
+  group_by(member_casual, day_of_week)%>%
+  select(ride_id, member_casual,day_of_week)%>%
+  count()%>%
+  ungroup()%>%
+  mutate( perc = n/sum(n))%>%
+  arrange(desc(perc))%>%
+  mutate(percents = scales::percent(perc))
+rename(Ride_weekly_by_group, trips = n)
+#print(Ride_weekly_by_group)
+
+# Plotting the chart
+ggplot(data = Ride_weekly_by_group) +
+geom_col(mapping = aes(day_of_week,n,fill = member_casual ))
+```
+
+
+
+### The time of ride
+In this session, the usage statistic will be grouped by the time period of the day. The total number of rides in each hour over 12 month period will be added. Then, it will be straightforward to see the peak hour for the service.
+
+```{r}
+colnames(analysis_df)
+
+#created new dataframe to group the usage in each hour of the day
+hourly_usage_df <- analysis_df%>%
+  group_by(time_of_day,member_casual)%>%
+  select(member_casual,time_of_day)%>%
+  arrange(time_of_day)%>%
+  count()
+
+#plot the graph with coloumn
+ggplot(data = hourly_usage_df) +
+geom_col(mapping = aes(time_of_day,n,fill = member_casual ))
+```
+
+
+```{r}
+colnames(trips_df)
+
+analysis_df%>%
+  group_by(member_casual)%>%
+  filter(ride_length > 120)%>%
+  select(ride_length,member_casual)%>%
+  summarize(duration_mean = mean(ride_length))
+
+shot_trips_count_test <- analysis_df%>%
+  filter(ride_length <= 120)%>%
+  group_by(member_casual) %>%
+  count()%>%
+  ungroup()%>%
+  mutate(perc = (n/sum(n)))%>%
+  arrange(perc)%>%
+  mutate(percents = scales::percent(perc))
+
+# t <- trips_df %>%
+#    format(data = started_at,format = "%H:%M")
+analysis_df%>%
+  mutate(time_of_day = hour(started_at))
+
+  
+
+
+
+
+```
+
+
+```{r}
+colnames(analysis_df)
+
+hourly_usage_df <- analysis_df%>%
+  group_by(time_of_day,member_casual)%>%
+  select(member_casual,time_of_day)%>%
+  arrange(time_of_day)%>%
+  count()
+
+ggplot(data = hourly_usage_df) +
+geom_col(mapping = aes(time_of_day,n,fill = member_casual ))
+```
+
+
